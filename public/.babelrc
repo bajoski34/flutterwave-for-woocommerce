@@ -1,0 +1,3 @@
+{
+  "presets": ["@babel/preset-env", "@babel/preset-react","@wordpress/babel-preset-default"]
+}
