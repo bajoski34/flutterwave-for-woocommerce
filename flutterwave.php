@@ -79,10 +79,22 @@ function flw_add_action_plugin( $links )
 add_filter( 'plugin_action_links_'.plugin_basename(__FILE__),'flw_add_action_plugin');
 
 
+/**
+ * WooCommerce fallback notice.
+ *
+ * @since 4.1.2
+ */
+function woocommerce_flutterwave_missing_wc_notice() {
+	/* translators: 1. URL link. */
+	echo '<div class="error"><p><strong>' . sprintf( esc_html__( 'Flutterwave requires WooCommerce to be installed and active. You can download %s here.', 'flutterwave' ), '<a href="https://woocommerce.com/" target="_blank">WooCommerce</a>' ) . '</strong></p></div>';
+}
+
 function init_flutterwave_woocommerce() {
-	if ( ! class_exists( 'WC_Payment_Gateway' ) ) {
+	if ( ! class_exists( 'WooCommerce' ) ) {
+		add_action( 'admin_notices', 'woocommerce_flutterwave_missing_wc_notice' );
 		return;
 	}
+
 	include_once( 'includes/class-flutterwave-gateway.php' );
 
 	new WP_Flutterwave_Settings_Rest_Route(WC_Flutterwave_Gateway::getInstance());
