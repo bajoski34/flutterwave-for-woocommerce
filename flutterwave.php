@@ -95,14 +95,19 @@ add_action( 'plugins_loaded', 'init_flutterwave_woocommerce', 0 );
 
 function load_scripts($hook)
 {
-	wp_enqueue_script('flutterwavenew_js', WC_FLUTTERWAVE_URL. 'admin/sample/test.js');
-	wp_localize_script( 'flutterwavenew_js', 'flutterwave_data', [
-		'apiUrl' => home_url( '/wp-json' ),
-		'nonce' => wp_create_nonce( 'wp_rest' ),
-		'hook' => $hook,
-		'logo_src' => plugins_url('src/icons/flutterwave-logo.svg', __FILE__),
-		'webhook' => WC()->api_request_url('Flutterwave_WC_Payment_Webhook')
-	]);
+	$flw_woo_check = false;
+	if ( class_exists( 'woocommerce' ) ) { $flw_woo_check = true;}
+
+	if($flw_woo_check){
+		wp_enqueue_script('flutterwavenew_js', WC_FLUTTERWAVE_URL. 'admin/sample/test.js');
+		wp_localize_script( 'flutterwavenew_js', 'flutterwave_data', [
+			'apiUrl' => home_url( '/wp-json' ),
+			'nonce' => wp_create_nonce( 'wp_rest' ),
+			'hook' => $hook,
+			'logo_src' => plugins_url('src/icons/flutterwave-logo.svg', __FILE__),
+			'webhook' => WC()->api_request_url('Flutterwave_WC_Payment_Webhook')
+		]);
+	}
 }
 add_action('admin_enqueue_scripts','load_scripts');
 
