@@ -94,8 +94,7 @@ class WC_Flutterwave_Gateway extends WC_Payment_Gateway
        
         }
 
-        $this->load_scripts();
-  
+		add_action( 'wp_enqueue_scripts', array( $this, 'load_scripts' ) );
     }
 
     # Build the administration fields for this specific Gateway
@@ -253,11 +252,13 @@ class WC_Flutterwave_Gateway extends WC_Payment_Gateway
      * @return void
      */
     public function receipt_page( $order ) {
+
 		$order = wc_get_order( $order );
 		echo '<p>'.__( 'Thank you for your order, please click the <b>Make Payment</b> button below to make payment. You will be redirected to a secure page where you can enter you card details or bank account details. <b>Please, do not close your browser at any point in this process.</b>', 'flw-payments' ).'</p>';
 		echo '<a class="button cancel" href="' . esc_url( $order->get_cancel_order_url() ) . '">';
 		echo __( 'Cancel order &amp; restore cart', 'flw-payments' ) . '</a> ';
 		echo '<button class="button alt  wc-forward" id="flw-pay-now-button">Make Payment</button> ';
+		
 	}
 
 	/**
@@ -268,9 +269,12 @@ class WC_Flutterwave_Gateway extends WC_Payment_Gateway
     public function load_scripts() {
 
 		if ( ! is_checkout_pay_page() ) return;
+
 		$p_key = $this->public_key;
 		$payment_options = $this->payment_options;
-		wp_enqueue_script( 'flw_js', plugins_url( 'public/js/flw.js',  WC_FLUTTERWAVE_PLUGIN_FILE), array( 'jquery' ), '1.0.0', true );
+
+		wp_enqueue_script( 'flutterwave_js', plugins_url( 'public/js/flutterwave.js',  WC_FLUTTERWAVE_PLUGIN_FILE), array( 'jquery' ), '1.1.0', true );
+
 		if( get_query_var( 'order-pay' ) ) {
 		  $order_key = urldecode( $_REQUEST['key'] );
 		  $order_id  = absint( get_query_var( 'order-pay' ) );
@@ -343,7 +347,8 @@ class WC_Flutterwave_Gateway extends WC_Payment_Gateway
 		  update_post_meta( $order_id, '_flw_payment_txn_ref', $txnref );
   
 		}
-		wp_localize_script( 'flw_js', 'flw_payment_args', $payment_args );
+
+		wp_localize_script( 'flutterwave_js', 'flw_payment_args', $payment_args );
   
 	}
 
@@ -359,11 +364,7 @@ class WC_Flutterwave_Gateway extends WC_Payment_Gateway
 		$publicKey = $this->public_key; 
 		$secretKey = $this->secret_key;
 		$logging_option = $this->logging_option; 
-		// if($this->go_live === 'yes'){
-		//   $env = 'live';
-		// }else{
-		//   $env = 'staging';
-		// }
+
 		$overrideRef = true;
 		  
 		if(isset($_GET['flutterwave_id']) && urldecode( $_GET['flutterwave_id'] )){

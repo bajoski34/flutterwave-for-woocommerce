@@ -96,8 +96,8 @@ class Flutterwave_Public {
 		 * class.
 		 */
 
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/flutterwave.js', array( 'jquery' ), $this->version, true );
-		wp_enqueue_script( $this->plugin_name."pay", plugin_dir_url( __FILE__ ) . 'js/v3.js', array( 'jquery' ), "0.1.1", true );
+		//wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/flutterwave.js', array( 'jquery' ), $this->version, true );
+		wp_enqueue_script( $this->plugin_name."pay", plugin_dir_url( __FILE__ ) . 'js/v3.js', array( 'jquery' ), $this->version, true );
 
 	}
 
