@@ -22,10 +22,12 @@ class FlutterwaveSdk {
     protected $redirectUrl;
     protected $meta = array();
     protected $transactionPrefix;
+    public $transaction_actual_id;
     public $logger;
     protected $handler;
     protected $liveUrl = 'https://api.flutterwave.com/v3';
     protected $baseUrl;
+    protected $tracking_url = 'https://kgelfdz7mf.execute-api.us-east-1.amazonaws.com/staging/sendevent';
     protected $transactionData;
     protected $overrideTransactionReference;
     protected $requeryCount = 0;
@@ -401,9 +403,11 @@ class FlutterwaveSdk {
      * @param string $referenceNumber This should be the reference number of the transaction you want to requery
      * @return object
      * */
-    function requeryTransaction($referenceNumber){
+    function requeryTransaction($referenceNumber, $referenceId){
         $logger = wc_get_logger();
         $this->txref = $referenceNumber;
+        $this->transaction_actual_id = $referenceId;
+
         $this->requeryCount++;
         $logger->notice('Requerying Transaction....'.$this->txref, $this->context);
         if(isset($this->handler)){
@@ -415,18 +419,21 @@ class FlutterwaveSdk {
             'SECKEY' => $this->secretKey,
         );
 
-        $transaction_actual_id = "testing";
+        $url = $this->baseUrl."/transactions/$this->transaction_actual_id/verify";
 
-        //$url = $this->baseUrl."/transactions/$transaction_actual_id/verify";
-
-        $url = "https://api.ravepay.co/flwv3-pug/getpaidx/api/v2/verify";
+        //$url = "https://api.ravepay.co/flwv3-pug/getpaidx/api/v2/verify";
 
         $headers = array('Content-Type' => 'application/json', 'Authorization' => 'Bearer '.$this->secretKey);
 
-        $response = wp_safe_remote_post( $url, array(
+        // $response = wp_safe_remote_post( $url, array(
+        //     'headers' => $headers,
+        //     'timeout' => 30,
+        //     'body' => wp_json_encode($data)
+        // ) );
+
+        $response = wp_safe_remote_get( $url, array(
             'headers' => $headers,
             'timeout' => 30,
-            'body' => wp_json_encode($data)
         ) );
 
         if ( is_wp_error( $response ) ) {
@@ -466,10 +473,12 @@ class FlutterwaveSdk {
                         $this->handler->onTimeout($this->txref, $response["data"]);
                     }
                 }else{
+
                     $logger->notice('delaying next requery for 3 seconds', $this->context);
                     sleep(3);
                     $logger->notice('Now retrying requery...', $this->context);
-                    $this->requeryTransaction($this->txref);
+                    $this->requeryTransaction($this->txref, $this->transaction_actual_id);
+                    
                 }
             }
         }else{

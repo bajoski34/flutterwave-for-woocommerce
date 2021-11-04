@@ -10,6 +10,7 @@ require_once (WC_FLUTTERWAVE_DIR_PATH. "SDK/library/flutterwave.php");
 require_once (WC_FLUTTERWAVE_DIR_PATH . 'includes/eventHandler.php' );
 
 use Sdk\Library\FlutterwaveSdk;
+
 class WC_Flutterwave_Gateway extends WC_Payment_Gateway
 {
 	public static $instance;
@@ -366,7 +367,6 @@ class WC_Flutterwave_Gateway extends WC_Payment_Gateway
 		$logging_option = $this->logging_option; 
 
 		$overrideRef = true;
-		  
 		if(isset($_GET['flutterwave_id']) && urldecode( $_GET['flutterwave_id'] )){
 		  $order_id = urldecode( $_GET['flutterwave_id'] );
 		  
@@ -421,6 +421,7 @@ class WC_Flutterwave_Gateway extends WC_Payment_Gateway
 		  
 		  if (isset($_GET['tx_ref']) && isset($_GET['transaction_id']) ) {
 			  $txn_ref = urldecode($_GET['tx_ref']);
+			  $txn_transaction_id = urldecode($_GET['transaction_id']);
 			  $o = explode('_', $txn_ref);
 			  $order_id = intval( $o[1] );
 			  $order = wc_get_order( $order_id );
@@ -428,7 +429,7 @@ class WC_Flutterwave_Gateway extends WC_Payment_Gateway
 			
 			  $logger->notice('Payment completed. Now requerying payment.');
 			  
-			  $payment->eventHandler(new myEventHandler($order))->requeryTransaction(urldecode($txn_ref));
+			  $payment->eventHandler(new myEventHandler($order))->requeryTransaction(urldecode($txn_ref),urldecode($txn_transaction_id));
 			  
 			  $redirect_url = $this->get_return_url( $order );
 			  header("Location: ".$redirect_url);

@@ -1,4 +1,5 @@
 <?php 
+require_once (WC_FLUTTERWAVE_DIR_PATH. "SDK/library/flutterwaveEventTracker.php");
 
 interface EventHandlerInterface{
     /**
@@ -47,19 +48,24 @@ interface EventHandlerInterface{
             
       // This is where you set how you want to handle the transaction at different stages
       class myEventHandler implements EventHandlerInterface{
+          use Sdk\Library\FlutterwaveEventTracker;
+
           private $order;
           
           function __construct($order){
-              $this->order = $order;
+            $this->order = $order;
+            $payment_method = 'flutterwave';
+            $this->settings = get_option('woocommerce_' . $payment_method . '_settings');
           }
           /**
            * This is called when the Flutterwave class is initialized
            * */
           function onInit($initializationData){
-              // Save the transaction to your DB.
-                $this->order->add_order_note('Payment initialized via Flutterwave');
-                update_post_meta( $this->order->get_id(), '_flw_payment_txn_ref', $initializationData['txref'] );
-                $this->order->add_order_note('Your transaction reference: '.$initializationData['txref']);
+            // Save the transaction to your DB.
+            self::setPublicKey($this->settings['public_key']);
+            $this->order->add_order_note('Payment initialized via Flutterwave');
+            update_post_meta( $this->order->get_id(), '_flw_payment_txn_ref', $initializationData['tx_ref'] );
+            $this->order->add_order_note('Your transaction reference: '.$initializationData['tx_ref']);
           }
           
           /**
@@ -69,13 +75,25 @@ interface EventHandlerInterface{
 
             // Get the transaction from your DB using the transaction reference (txref)
             // Check if you have previously given value for the transaction. If you have, redirect to your successpage else, continue
-            //   echo "<pre>";
-            //   print_r($transactionData);
-            //   echo "</pre>";
-            //   exit;
+              // echo "<pre>";
+              // print_r($transactionData);
+              // echo "</pre>";
+              // exit;
               if($transactionData['status'] === 'successful'){
 
                   if($transactionData['currency'] == $this->order->get_currency() && $transactionData['amount'] == $this->order->get_total()){
+
+                      switch ($transactionData['authmodel']) {
+                        case 'mobilemoney':
+                            self::sendAnalytics("Initiate-Momo-transfer");
+                            break;
+                        case 'USSD':
+                            self::sendAnalytics("Initiate-USSD-transfer");//ussd
+                            break;
+                        default:
+                            self::sendAnalytics("Initiate-Card-Payments");//card
+                            break;
+                      }
                       $this->order->payment_complete( $this->order->get_id() );
                       $payment_method = $this->order->get_payment_method();
 
@@ -85,7 +103,7 @@ interface EventHandlerInterface{
                             $this->order->update_status( 'completed' );
 		              }
                       $this->order->add_order_note('Payment was successful on Flutterwave');
-                      $this->order->add_order_note('Flutterwave transaction reference: '.$transactionData['flwref']); 
+                      $this->order->add_order_note('Flutterwave transaction reference: '.$transactionData['flw_ref']); 
 
                         $customer_note  = 'Thank you for your order.<br>';
                         $customer_note .= 'Your payment was successful, we are now <strong>processing</strong> your order.';
@@ -99,7 +117,7 @@ interface EventHandlerInterface{
                         $customer_note .= 'Your payment successfully went through, but we have to put your order <strong>on-hold</strong> ';
                         $customer_note .= 'because the we couldn\t verify your order. Please, contact us for information regarding this order.';
                         $admin_note     = 'Attention: New order has been placed on hold because of incorrect payment amount or currency. Please, look into it. <br>';
-                        $admin_note    .= 'Amount paid: '. $transactionData['currency'].' '. $transactionData['amount'].' <br> Order amount: '.$this->order->get_currency().' '. $this->order->get_total().' <br> Reference: '.$transactionData['txref'];
+                        $admin_note    .= 'Amount paid: '. $transactionData['currency'].' '. $transactionData['amount'].' <br> Order amount: '.$this->order->get_currency().' '. $this->order->get_total().' <br> Reference: '.$transactionData['tx_ref'];
             
                         $this->order->add_order_note( $customer_note, 1 );
                         $this->order->add_order_note( $admin_note );
@@ -108,7 +126,7 @@ interface EventHandlerInterface{
                   }
 
                   //get order_id from the txref
-                  $getOrderId = explode('_', $transactionData['txref']);
+                  $getOrderId = explode('_', $transactionData['tx_ref']);
                   $order_id = $getOrderId[1];
 
                   WC()->cart->empty_cart();
@@ -128,6 +146,18 @@ interface EventHandlerInterface{
               // Get the transaction from your DB using the transaction reference (txref)
               // Update the db transaction record (includeing parameters that didn't exist before the transaction is completed. for audit purpose)
               // You can also redirect to your failure page from here
+              switch ($transactionData['authmodel']) {
+                case 'mobilemoney':
+                    self::sendAnalytics("Initiate-Momo-Payment-error");;
+                    break;
+                case 'USSD':
+                    self::sendAnalytics("Initiate-USSD-Payment-error");;//ussd
+                    break;
+                default:
+                    self::sendAnalytics("Initiate-Card-Payment-error");
+                    break;
+              }
+              self::sendAnalytics("Initiate-Ach-Payment-error");
               $this->order->update_status( 'Failed' );
               $this->order->add_order_note('The payment failed on Flutterwave');
               $customer_note  = 'Your payment <strong>failed</strong>. ';
