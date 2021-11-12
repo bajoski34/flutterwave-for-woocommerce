@@ -1,6 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500&display=swap");
 
-$white: #ffffff;
+$white: #fff;
 
 @font-face {
 	font-family: "FlutterwaveRegular";
@@ -16,13 +16,64 @@ $white: #ffffff;
 	font-weight: normal;
 }
 
-// #wpbody-content {
-// 	height: 100%;
-// 	background-color: $white;
-// }
 @media screen and (min-width: 768px) {
+	.flw-woocommerce-layout__header-wrapper {
+		display: flex;
+		align-items: center;
+		min-height: 60px;
+		display: flex;
+		align-items: center;
+		flex: 1 auto;
+		height: 60px;
+		background: #fff;
+		font-weight: 600;
+		font-size: 14px;
+	}
+
+	.is-scrolled.noshadow {
+		-webkit-box-shadow: none;
+		-moz-box-shadow: none;
+		box-shadow: none;
+	}
+
+	.flw-woocommerce-layout__header {
+		background: #fff;
+		box-sizing: border-box;
+		padding: 0;
+		position: fixed;
+		width: 100%;
+		top: 32px;
+		z-index: 1001;
+		display: flex;
+		align-items: center;
+		min-height: 60px;
+		display: flex;
+		align-items: center;
+		padding: 0 0 0 40px;
+		flex: 1 auto;
+		height: 60px;
+		background: #fff;
+		font-weight: 600;
+		font-size: 14px;
+	}
+	.flw-woocommerce-layout {
+		padding: 0;
+		margin: 0;
+		display: block;
+		font-family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif';
+	}
+
+	#woocommerce-layout__primary {
+		margin-left: 0;
+		margin-right: 0;
+	}
 	.flutterwave-container {
 		text-align: center;
+	}
+
+	#wpbody-content {
+		height: 100%;
+		background-color: $white;
 	}
 
 	.flutterwave-body {
@@ -145,11 +196,49 @@ $white: #ffffff;
 		flex-direction: column;
 	}
 
+	.flw_container_two {
+		padding: 2em;
+		padding-left: 0.5em;
+		background-color: $white;
+		display: flex;
+		flex-direction: column;
+	}
+
+	.css-a5mhaz {
+		padding-left: 2.5em;
+		padding-right: 2.5em;
+		padding-top: 0;
+	}
+
+	.flw-table {
+		margin-left: 4px;
+		width: 100%;
+		margin-top: -40px;
+	}
+
+	.flw-table th {
+		text-transform: capitalize;
+		font-weight: 300;
+	}
+
+	.flw-table td {
+		font-weight: 300;
+	}
+
+	.flw-tag {
+		font-weight: 300;
+		font-size: 13px;
+	}
+
+	.flw-nav {
+		font-weight: 300;
+	}
+
 	.flw-row {
 		display: inline-flex;
 		flex-direction: row;
 		column-gap: 26em;
-		margin-bottom: 1em;
+		margin-bottom: 2em;
 		align-content: stretch;
 	}
 
@@ -179,8 +268,10 @@ $white: #ffffff;
 	}
 
 	.hookInstruct {
+		margin-top: 8px;
 		font-size: 12px;
 		bottom: 0;
+		color: rgb(189, 189, 189);
 	}
 	.hookURL {
 		background-color: #feeced;
@@ -190,7 +281,7 @@ $white: #ffffff;
 		padding-top: 5px;
 		padding-bottom: 5px;
 		border-radius: 4px;
-		margin-top: auto;
+		margin-top: 8px;
 		text-align: center;
 		vertical-align: center;
 		font-style: italic;
@@ -219,6 +310,10 @@ $white: #ffffff;
 
 	span.planheading {
 		display: inline-block;
+	}
+
+	.flw-huge-text {
+		margin-top: 100px;
 	}
 
 	.TabOptions {
@@ -291,4 +386,14 @@ $white: #ffffff;
 		letter-spacing: 0px;
 		text-align: left;
 	}
+
+	.flutterwave-top,
+	.flutterwave-middle,
+	.flutterwave-bottom {
+		margin-left: 48px;
+	}
+}
+
+.flutterwave-bottom {
+	margin-bottom: 100px;
 }

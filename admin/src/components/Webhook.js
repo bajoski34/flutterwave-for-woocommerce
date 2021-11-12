@@ -9,7 +9,13 @@ const Webhook = (props) => {
 				dashboard
 			</p>
 			<p className="hookURL">{props.hookURL}</p>
-			<div style={{ display: "flex", alignItems: "center" }}>
+			<div
+				style={{
+					display: "flex",
+					alignItems: "center",
+					marginTop: "5px",
+				}}
+			>
 				<a
 					className="refLink"
 					href="https://dashboard.flutterwave.com"

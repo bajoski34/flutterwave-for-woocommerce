@@ -14,7 +14,7 @@ const Select = (props) => {
 			<select
 				className="flw-inputs"
 				onChange={props.onChange}
-				defaultValue={props.diff}
+				defaultValue={props.value}
 			>
 				<option value="inline">
 					Pop up - (keep payment experience on the website)

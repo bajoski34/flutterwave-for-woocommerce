@@ -69,15 +69,19 @@ const Overview = () => {
 						className="flutterwave-bottom"
 						style={{ marginTop: "56px" }}
 					>
-						<p style={{ marginBottom: "40px" }}>
+						<p style={{ marginBottom: "40px", fontSize: "18px" }}>
 							By clicking “Finish setup”, you agree to the
 							<a style={{ marginLeft: "3px", color: "#f5a623" }}>
 								Terms of Service.
 							</a>
 						</p>
 						<Button
+							className="flutterwave-btn"
 							variant="primary"
-							style={{ backgroundColor: "#f5a623" }}
+							style={{
+								backgroundColor: "#f5a623",
+								marginBottom: "20px",
+							}}
 							href={safeDecodeURIComponent(
 								"admin.php?page=wc-admin&path=%2Fpayments%2Fsettings"
 							)}

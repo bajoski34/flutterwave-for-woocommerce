@@ -16,7 +16,7 @@ const TableComp = ({ head, data, type }) => {
 	// console.log(data);
 	return (
 		<React.Fragment>
-			<Table variant="simple">
+			<Table class="flw-table" variant="simple">
 				<Thead bg="#F4F6F8">
 					<Tr>
 						{head.map((h, index) => {
@@ -33,12 +33,23 @@ const TableComp = ({ head, data, type }) => {
 								<Td>{item.customer.name}</Td>
 								<Td>
 									{"successful" == item.status && (
-										<Tag colorScheme="green">
+										<Tag
+											className="flw-tag"
+											style={{
+												backgroundColor: "#c6f6d5",
+												color: "black",
+												fontSize: "13px",
+												fontWeight: "300",
+											}}
+										>
 											{item.status}
 										</Tag>
 									)}
 									{"failed" == item.status && (
-										<Tag colorScheme="red">
+										<Tag
+											className="flw-tag"
+											colorScheme="red"
+										>
 											{item.status}
 										</Tag>
 									)}

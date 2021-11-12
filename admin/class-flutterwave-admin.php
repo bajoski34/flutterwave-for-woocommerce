@@ -56,18 +56,18 @@ class Flutterwave_Admin {
 		$this->version = $version;
 	}
 
-    // /**
-    //  * Register the administration menu for this plugin into the WordPress Dashboard menu.
-    //  *
-    //  * @since    0.1.0
-    //  */
+    /**
+     * Register the administration menu for this plugin into the WordPress Dashboard menu.
+     *
+     * @since    0.1.0
+     */
     // public function add_plugin_admin_menu() 
     // {
     //     // Add woocommerce menu subitem
     //     add_submenu_page( 
     //         'woocommerce', 
-    //         __( 'Flutterwave for WooCommerce', 'flutterwave'), 
-    //         __( 'Flutterwave', 'flutterwave' ),
+    //         'Flutterwave for WooCommerce', 
+    //         "PHP page",
     //         'manage_options',
     //         'flutterwave',
     //         array($this,'admin_overview_page')
@@ -97,6 +97,8 @@ class Flutterwave_Admin {
 				],
 			]
 		);
+
+
      
         // wc_admin_register_page( array(
         //     'id'       => 'flutterwave-overview',
@@ -112,14 +114,50 @@ class Flutterwave_Admin {
 
 		wc_admin_register_page( array(
 				'id'       => 'flutterwave-settings',
-				'title'    => 'Flutterwave',
-				'parent'   => 'woocommerce',
+				'title'    => 'Payment settings',
+				'parent'   => 'wc-flutterwave',
 				'capability' => 'manage_woocommerce',
 				'path'     => '/payments/settings',
 				'nav_args' => [
 					'parent' => 'flutterwave',
 					'order'  => 20,
 				]
+		));
+
+		wc_admin_register_page( array(
+			'id'       => 'flutterwave-transactions',
+			'title'    => 'Transactions',
+			'parent'   => 'wc-flutterwave',
+			'capability' => 'manage_woocommerce',
+			'path'     => '/flutterwave/transactions',
+			'nav_args' => [
+				'parent' => 'flutterwave',
+				'order'  => 20,
+			]
+		));
+
+		wc_admin_register_page( array(
+			'id'       => 'flutterwave-plans',
+			'title'    => 'Payment plans',
+			'parent'   => 'wc-flutterwave',
+			'capability' => 'manage_woocommerce',
+			'path'     => '/flutterwave/plans',
+			'nav_args' => [
+				'parent' => 'flutterwave',
+				'order'  => 20,
+			]
+		));
+
+		wc_admin_register_page( array(
+			'id'       => 'flutterwave-subaccounts',
+			'title'    => 'Subaccounts',
+			'parent'   => 'wc-flutterwave',
+			'capability' => 'manage_woocommerce',
+			'path'     => '/flutterwave/subaccounts',
+			'nav_args' => [
+				'parent' => 'flutterwave',
+				'order'  => 20,
+			]
 		));
 
         // wc_admin_connect_page(
@@ -204,23 +242,20 @@ class Flutterwave_Admin {
 		exit();
 	}
 
-
-
-
-    /**
-     * Include the new Navigation Bar the Admin page.
-     *     // Add WooCommerce Navigation Bar
-     */
-    // function add_woocommerce_navigation_bar() {
-    //     if ( function_exists( 'wc_admin_connect_page' ) ) {
+	/**
+	 * Include the new Navigation Bar the Admin page.
+	 *     // Add WooCommerce Navigation Bar
+	 */
+	// function add_woocommerce_navigation_bar() {
+	// 	if ( function_exists( 'wc_admin_connect_page' ) ) {
     //         wc_admin_connect_page(
     //             array(
     //                 'id'        => "flutterwave",
     //                 'screen_id' => 'woocommerce_page_flutterwave',
-    //                 'title'     => __( 'Flutterwave', 'Overview' ),
-    //                 // 'path'      => add_query_arg( 'page', 'wc-onboarding',
-    //             )
-    //             );
+    //                 'title'     => __( 'Flutterwave Settings', 'Overview' ),
+    //                 'path'      => add_query_arg( 'page', 'flw-onboarding',)
+	// 			)
+	// 		);
     //     }
     // }
 
@@ -251,7 +286,15 @@ class Flutterwave_Admin {
              return;
         }
 
-		if($hook == 'woocommerce_page_wc-admin' && $url_params['path'] == '/overview' || $hook == 'woocommerce_page_wc-admin' && $url_params['path'] == '/payments/settings'){
+		$flutterwave_paths = array( 
+			"/overview",
+		 	"/payments/settings",
+		 	"/flutterwave/plans", 
+		 	"/flutterwave/transactions",
+			"/flutterwave/subaccounts"
+		);
+
+        if( in_array($url_params['path'], $flutterwave_paths) ){
 			// wp_dequeue_style($this->plugin_name."_settings");
 			wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/flutterwave-admin.css', array(), $this->version, 'all' );
 		}
@@ -282,7 +325,16 @@ class Flutterwave_Admin {
         {
             return;
         }
-        if($url_params['path'] == '/overview'|| $url_params['path'] == '/payments/settings'){
+
+		$flutterwave_paths = array( 
+			"/overview",
+		 	"/payments/settings",
+		 	"/flutterwave/plans", 
+		 	"/flutterwave/transactions",
+			"/flutterwave/subaccounts"
+		);
+
+        if( in_array($url_params['path'], $flutterwave_paths) ){
 			$script_path = '/js/overview.js';
     		$script_asset_path = dirname( __FILE__ ) . '/js/overview.asset.php';
     		$script_asset = file_exists( $script_asset_path )
@@ -298,9 +350,7 @@ class Flutterwave_Admin {
     * @return $links
     */
     public function settings_link(  $links ) {
-
         // $flonboarding = esc_url( get_admin_url( null, 'admin.php?page=wc-admin&path=/payments/settings' ) );
-        
 		$settings_link = '<a href="'.$flonboarding.'">Settings</a>';
 		array_unshift( $links,  $settings_link);
 		return $links;
@@ -321,7 +371,6 @@ class Flutterwave_Admin {
     */
     public function admin_setting_page() {
       include_once( plugin_dir_path( __FILE__ ) . 'views/admin-settings-page.php' );
-      //include_once( plugin_dir_path( __FILE__ ) . 'partials/fpf-flutterwave-admin-display.php' );
     }
 
 	/**
@@ -330,7 +379,6 @@ class Flutterwave_Admin {
     */
 	public function form_setting_page() {
 		include_once( plugin_dir_path( __FILE__ ) . 'views/admin-payment-form-page.php' );
-		
 	}
 
 }

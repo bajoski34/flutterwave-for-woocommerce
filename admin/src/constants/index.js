@@ -9,3 +9,4 @@ export const TRANSACTIONS = "payments/transactions";
 export const PLAN = "payments/plan";
 // http://localhost/wordpress/wp-json/flutterwave-for-woocommerce/v1/payments/plan
 export const SUBACCOUNTS = "payments/subaccounts";
+export const BANKS = "payments/banks";

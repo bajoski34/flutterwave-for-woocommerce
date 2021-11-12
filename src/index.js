@@ -36,7 +36,7 @@ registerPaymentMethod({
 	ariaLabel: __("Flutterwave payment method", "flutterwave"),
 	canMakePayment: () => true,
 	content: <div>Pay with cash Flutterwave.</div>,
-	edit: <div>Flutterwave 2</div>,
+	edit: <div>Pay with cash Flutterwave.</div>,
 	savedTokenComponent: <div>Flutterwave 3</div>,
 	supports: {
 		features: ["products"],
