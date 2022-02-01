@@ -36,7 +36,7 @@
     "@woocommerce/settings": "^1.0.0",
     "@wordpress/babel-preset-default": "^6.3.3",
     "babel-loader": "^8.2.3",
-    "css-loader": "^6.4.0",
+    "css-loader": "^6.5.1",
     "file-loader": "^6.2.0",
     "sass": "^1.43.3",
     "sass-loader": "^12.2.0",
